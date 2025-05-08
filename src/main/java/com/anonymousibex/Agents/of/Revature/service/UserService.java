@@ -40,6 +40,7 @@ public class UserService {
 
         user.setPassword(encoder.encode(password));
         user.setRole(Role.USER);
+        user.setUsername(username);
         return UserUtils.toUserDto(userRepository.save(user));
     }
 
