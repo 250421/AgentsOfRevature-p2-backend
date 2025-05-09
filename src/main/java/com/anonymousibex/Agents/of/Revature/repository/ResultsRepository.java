@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface ResultsRepository extends JpaRepository<Results, Long>{
-    Optional<Results> findByUserId(long userId);
+    Optional<Results> findByCalamityId(long id);
 }

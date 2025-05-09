@@ -1,12 +1,12 @@
 package com.anonymousibex.Agents.of.Revature.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import lombok.Data;
 
+
+@Data
+@Entity
+@Table(name = "results")
 public class Results {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,7 +14,8 @@ public class Results {
 
     //@ManyToOne
     //@JoinColumn(name = "calamityId", referencedColumnName = "id")
-    //private Calamity calamityId;
+    @Column(name = "calamityId")
+    private Long calamityId;
 
     @Column(name = "result")
     private String result;

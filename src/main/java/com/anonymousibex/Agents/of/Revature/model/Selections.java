@@ -1,9 +1,12 @@
 package com.anonymousibex.Agents.of.Revature.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import lombok.Data;
+
+@Data
+@Entity
+@Table(name = "selections")
 
 public class Selections {
     @Id
@@ -12,7 +15,8 @@ public class Selections {
     
     //@ManyToOne
     //@JoinColumn(name = "calamityId", referencedColumnName = "id")
-    //private Calamity calamityId;
+    @Column(name = "calamityId")
+    private Long calamityId;  // remember to change to type calamity
 
     @Column(name = "result")
     private String result;
