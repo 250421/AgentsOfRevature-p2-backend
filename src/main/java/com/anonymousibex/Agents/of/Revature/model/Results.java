@@ -12,9 +12,9 @@ public class Results {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "calamityId", referencedColumnName = "id")
-    private Calamity calamityId;
+    //@ManyToOne
+    //@JoinColumn(name = "calamityId", referencedColumnName = "id")
+    //private Calamity calamityId;
 
     @Column(name = "result")
     private String result;
