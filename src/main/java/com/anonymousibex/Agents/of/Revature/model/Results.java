@@ -27,8 +27,8 @@ public class Results {
     @Column(name = "calamity_id", insertable=false, updatable=false)
     private Long calamity_id;
 
-    @Enumerated(EnumType.STRING)
-    private MatchResult result;
+    @Column(name = "didWin")
+    private boolean didWin;
 
     @Column(name = "repGained")
     private int repGained;
