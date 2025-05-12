@@ -13,10 +13,12 @@ public class Selections {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    //@ManyToOne
-    //@JoinColumn(name = "calamityId", referencedColumnName = "id")
-    @Column(name = "calamityId")
-    private Long calamityId;  // remember to change to type calamity
+    @ManyToOne
+    @JoinColumn(name = "calamityId", referencedColumnName = "id")
+    private Calamity calamity;
+
+    @Column(name = "calamityId", insertable=false, updatable=false)
+    private Long calamityId;
 
     @Column(name = "result")
     private String result;
