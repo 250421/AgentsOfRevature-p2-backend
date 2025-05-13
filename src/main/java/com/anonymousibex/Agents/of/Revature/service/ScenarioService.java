@@ -3,6 +3,7 @@ package com.anonymousibex.Agents.of.Revature.service;
 import com.anonymousibex.Agents.of.Revature.dto.ContinueScenarioRequest;
 import com.anonymousibex.Agents.of.Revature.dto.ScenarioDto;
 import com.anonymousibex.Agents.of.Revature.dto.ScenarioRequestDto;
+import com.anonymousibex.Agents.of.Revature.exception.CalamityNotFoundException;
 import com.anonymousibex.Agents.of.Revature.model.*;
 import com.anonymousibex.Agents.of.Revature.repository.*;
 import com.anonymousibex.Agents.of.Revature.util.ScenarioMapper;
@@ -34,7 +35,7 @@ public class ScenarioService {
 
     public ScenarioDto startScenario(ScenarioRequestDto request) {
         Calamity calamity = calamityRepository.findById(request.calamityId())
-                .orElseThrow(() -> new EntityNotFoundException("Calamity not found"));
+                .orElseThrow(() -> new CalamityNotFoundException("Calamity not found"));
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
