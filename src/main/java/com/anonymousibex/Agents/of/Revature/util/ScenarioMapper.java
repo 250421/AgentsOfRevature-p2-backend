@@ -20,7 +20,8 @@ public class ScenarioMapper {
                 scenario.getHeroes(),
                 scenario.getPointTotal(),
                 scenario.getChapterCount(),
-                storyPointDtos
+                storyPointDtos,
+                scenario.getClosing()
         );
     }
         public static StoryPointDto toDto(StoryPoint point) {

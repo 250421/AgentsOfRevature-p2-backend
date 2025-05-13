@@ -8,5 +8,6 @@ public record ScenarioDto(
         List<String> heroes,
         int pointTotal,
         int chapterCount,
-        List<StoryPointDto> storyPoints
+        List<StoryPointDto> storyPoints,
+        String closing
 ) {}

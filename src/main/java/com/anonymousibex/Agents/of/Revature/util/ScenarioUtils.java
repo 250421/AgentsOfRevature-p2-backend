@@ -13,7 +13,32 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ScenarioUtils {
-    static final public String PROMPT = "I am an agent who works directly with a stable of heros and superheros. I respond to missions, called calamities, by selecting three heros to bring with me to save the day. There is always a villain behind the calamity, but I don't know who it is until I arrive at the scene. Your job will be to recieve the mission details, the heros I brought with me, the severity of the calamity, and the chapter of the adventure, and then you will generate a text adventure where I will get to choose from 3 options. Each text adventure will be 5 chapters long. Any chapters that have already occurred will be provided for context. The villain will always be revealed in chapter 1. The difficulty in succeeding in saving the day should depend on the calamity severity (critical, high, medium, low). The difficuly will not change as the chapters progress. After my selection on chapter 5, the final chapter of the scenario, you need to generate a closing scenario and tell me if I've succeeded or failed. You should also provide the point values for each choice. These will be obscured from the user, but I need them to give back to you for each successive chapter so you know the running point total. A bonus point should be awarded if I effectively utilize a hero from the same universe as the villain, and the most points I can win in a round is 3, including the bonus point. For critical missions, I'll need 14 points to succeed (maximum of 15 total). For high severity missions I'll need 12, for medium I'll need 10, and for low I'll need 8. You need to return the scenario and my options to me in the exact format provided with no additional text, styling, or formatting: This is an example scenario.<>This is the first option.<>2<>This is the second option.<>1<>This is the third and final option for this scenario.<>1   --The context is as follows:";
+    static final public String PROMPT =
+            "You are writing a 5-chapter interactive superhero story. Each chapter contains a narrative followed by exactly 3 choices. " +
+                    "Each choice must include a point value from 0 to 3. The chapter’s story difficulty depends on the calamity’s severity: critical, high, medium, or low. " +
+                    "Bonus points (up to +1) are awarded if the choice effectively uses a hero from the villain’s universe. " +
+                    "You must format your response using the '>' character as a delimiter and **nothing else**. The formatting is critical — I am parsing your response automatically.\n\n" +
+
+                    "Required format:\n" +
+                    "[1] Story text describing the chapter scenario (1 paragraph)>[2] First option text>[3] First option points>[4] Second option text>[5] Second option points>[6] Third option text>[7] Third option points\n\n" +
+
+                    "Example:\n" +
+                    "The heroes arrive at a city overrun by robotic drones. Citizens are fleeing in panic as a massive drone prepares to detonate a plasma bomb.>Attempt to disable the bomb with tech hero support.>2>Evacuate civilians first to minimize casualties.>1>Confront the drone directly using brute force.>0\n\n" +
+
+                    "**Do not include any other symbols, explanations, or text outside of this format. This is essential.**\n\n" +
+
+                    "You will be provided with the team of heroes, the calamity, current chapter number, and a recap of previous chapters. " +
+                    "Now generate the story and response for the current chapter.\n\n" +
+
+                    "The context is as follows:";
+
+    static final public String FINAL_PROMPT =
+            "Provide me the story conclusion to the text based adventure that I will share with you below. " +
+                    "For critical missions, I'll need 14 points to succeed (maximum of 15 total). For high severity missions I'll need 12, for medium I'll need 10, and for low I'll need 8. "+
+                    "Do not provide any new options or point values. " +
+                    "Instead, deliver a succinct closing narrative that explains what happens " +
+                    "to the heroes, reveals whether they succeeded or failed, and states the final point total. " +
+                    "Format your response as a single paragraph with no special delimiters.";
 
     public static String buildPrompt(ScenarioRequestDto dto, Scenario scenario, List<UserSelection> selections) {
         StringBuilder promptBuilder = new StringBuilder(PROMPT);
@@ -54,6 +79,7 @@ public class ScenarioUtils {
         } else {
             promptBuilder.append("\n\nThe context is as follows: (first chapter — no prior events)");
         }
+        promptBuilder.append("\n\nPlease remember: return only the scenario text and 3 options with point values, formatted using '>' as described. No extra commentary.\n");
 
         return promptBuilder.toString();
     }
@@ -61,7 +87,7 @@ public class ScenarioUtils {
     public static StoryPoint parseStoryPoint(String raw, Scenario scenario, int chapterNum) {
         System.out.println("Parsing StoryPoint raw:\n" + raw);
 
-        String[] tokens = raw.split("<>");
+        String[] tokens = raw.split(">");
         String storyText = tokens[0].trim();
 
         List<StoryPointOption> options = new ArrayList<>();
@@ -95,7 +121,19 @@ public class ScenarioUtils {
         return point;
     }
 
-
+    public static String buildContextRecap(Scenario scenario, List<UserSelection> selections) {
+        var sb = new StringBuilder();
+        for (UserSelection sel : selections) {
+            sb.append("Chapter ")
+                    .append(sel.getChapterNumber())
+                    .append(": ")
+                    .append(sel.getStoryPoint().getText())
+                    .append(" My choice: ")
+                    .append(sel.getSelectedOption().getText())
+                    .append(". ");
+        }
+        return sb.toString();
+    }
 
     public static ScenarioRequestDto toRequestDto(Scenario scenario) {
         return new ScenarioRequestDto(
@@ -105,6 +143,10 @@ public class ScenarioUtils {
                 scenario.getHero2(),
                 scenario.getHero3()
         );
+    }
+
+    public static boolean isValidGeminiResponse(String raw) {
+        return raw.split(">").length == 7;
     }
 
 }

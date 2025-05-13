@@ -29,6 +29,9 @@ public class Scenario {
     private int chapterCount = 0;
     private boolean complete = false;
 
+    @Column(length = 1000)
+    private String closing;
+
     @OneToMany(mappedBy = "scenario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StoryPoint> storyPoints = new ArrayList<>();
 
