@@ -1,13 +1,14 @@
 package com.anonymousibex.Agents.of.Revature.controller;
 
+import com.anonymousibex.Agents.of.Revature.dto.ContinueScenarioRequest;
+import com.anonymousibex.Agents.of.Revature.dto.ScenarioDto;
+import com.anonymousibex.Agents.of.Revature.dto.ScenarioRequestDto;
+import com.anonymousibex.Agents.of.Revature.model.Scenario;
 import com.anonymousibex.Agents.of.Revature.service.ScenarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -18,8 +19,17 @@ public class ScenarioController {
     private final ScenarioService scenarioService;
 
     @PostMapping
-    public ResponseEntity<String> startScenario(@RequestBody String scenario){
-        String response = scenarioService.start(scenario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<ScenarioDto> startScenario(@RequestBody ScenarioRequestDto requestDto) {
+        ScenarioDto scenarioDto = scenarioService.startScenario(requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(scenarioDto);
+    }
+
+    @PatchMapping("/{scenarioId}")
+    public ResponseEntity<ScenarioDto> continueScenario(
+            @PathVariable Long scenarioId,
+            @RequestBody ContinueScenarioRequest req
+    ) {
+        ScenarioDto updated = scenarioService.continueScenario(scenarioId, req);
+        return ResponseEntity.ok(updated);
     }
 }
