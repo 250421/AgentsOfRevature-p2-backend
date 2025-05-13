@@ -14,14 +14,19 @@ public class Selections {
     private Long id;
     
     @ManyToOne
-    @JoinColumn(name = "calamityId", referencedColumnName = "id")
+    @JoinColumn(name = "calamity_id", referencedColumnName = "id")
     private Calamity calamity;
 
-    @Column(name = "calamityId", insertable=false, updatable=false)
-    private Long calamityId;
+    @Column(name = "calamity_id", insertable=false, updatable=false)
+    private Long calamity_id;
 
-    @Column(name = "result")
-    private String result;
+    @ManyToOne
+    @JoinColumn(name = "User_id", referencedColumnName = "id")
+    private User user;
+
+    @Column(name = "user_id", insertable=false, updatable=false)
+    private Long user_id;
+
 
     @Column(name = "hero1")
     private String hero1;
