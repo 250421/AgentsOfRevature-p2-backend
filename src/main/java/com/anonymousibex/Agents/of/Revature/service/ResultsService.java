@@ -6,9 +6,9 @@ import java.util.Optional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.anonymousibex.Agents.of.Revature.exception.CalamityNotFoundException;
-import com.anonymousibex.Agents.of.Revature.exception.NoUserResultsFoundException;
+import com.anonymousibex.Agents.of.Revature.exception.*;
 import com.anonymousibex.Agents.of.Revature.model.Results;
+
 import com.anonymousibex.Agents.of.Revature.repository.CalamityRepository;
 import com.anonymousibex.Agents.of.Revature.repository.ResultsRepository;
 import com.anonymousibex.Agents.of.Revature.repository.UserRepository;
@@ -29,7 +29,7 @@ public class ResultsService {
 
      public List<Results> getAllUserResults(Long userId){
         Optional<List<Results>> results = resultsRepository.findByUserId(userId);
-        if(results.isPresent()){
+        if(results.isPresent() && !results.get().isEmpty()){
             List<Results> userResults = results.get();
             return userResults;
         }
@@ -37,22 +37,28 @@ public class ResultsService {
     }
 
     public Results AddResult(Results result){
-        if(calamityRepository.findById(result.getCalamity_id()).isPresent()){
-            result.setCalamity(calamityRepository.findById(result.getCalamity_id()).get());
-        }
-        else{
-            throw new UsernameNotFoundException("User not found.");
-        }
-
         if(userRepository.findById(result.getUser_id()).isPresent()){
             result.setUser(userRepository.findById(result.getUser_id()).get());
+            if(calamityRepository.findById(result.getCalamity_id()).isPresent()){
+                result.setCalamity(calamityRepository.findById(result.getCalamity_id()).get());
+                resultsRepository.save(result);
+                return result;
+            }
+            throw new CalamityNotFoundException("Calamity not found.");
         }
-        else{
-             throw new CalamityNotFoundException("Calamity not found.");
+        throw new UsernameNotFoundException("User not found.");
+    }
+
+    public Results UpdateResult(Results result){
+        if(resultsRepository.findById(result.getId()).isPresent()){
+            Results resultToUpdate = resultsRepository.findById(result.getId()).get();
+            resultToUpdate.setRepGained(result.getRepGained());
+            resultToUpdate.setDidWin(result.isDidWin());
+            resultsRepository.save(resultToUpdate);
+            return resultToUpdate;
         }
-        
-        resultsRepository.save(result);
-        return result;
+         throw new NoUserResultsFoundException("No result found.");
+       
     }
 
 }

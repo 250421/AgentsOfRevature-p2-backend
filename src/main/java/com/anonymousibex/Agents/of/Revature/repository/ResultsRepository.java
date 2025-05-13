@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ResultsRepository extends JpaRepository<Results, Long>{
     Optional<Results> findByCalamityId(long id);
-    Optional<List<Results>> findByUserId(long id);
+    Optional<List<Results>>findByUserId(long id);
 
 }
