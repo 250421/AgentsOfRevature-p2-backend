@@ -26,7 +26,6 @@ public class ScenarioService {
     private final StoryPointOptionRepository storyPointOptionRepository;
     private final GeminiService geminiService;
 
-    // Lambda to send prompt to Gemini and return text
     private final Function<String, String> callGemini = prompt ->
             new Client()
                     .models
@@ -73,7 +72,6 @@ public class ScenarioService {
         StoryPointOption picked = storyPointOptionRepository.findById(req.selectedOptionId())
                 .orElseThrow(() -> new EntityNotFoundException("Option not found"));
 
-        // 1) Persist user's selection
         int currentChapter = scenario.getChapterCount();
         UserSelection sel = new UserSelection();
         sel.setScenario(scenario);
@@ -82,7 +80,6 @@ public class ScenarioService {
         sel.setChapterNumber(currentChapter);
         userSelectionRepository.save(sel);
 
-        // 2) Update totals
         scenario.setPointTotal(scenario.getPointTotal() + picked.getPoints());
         scenario.setChapterCount(currentChapter + 1);
         scenarioRepository.save(scenario);
@@ -90,7 +87,6 @@ public class ScenarioService {
         int nextChapter = scenario.getChapterCount();
 
         if (nextChapter <= 5) {
-            // Chapters 2–5 flow
             List<UserSelection> allSelections = userSelectionRepository
                     .findByScenarioIdOrderByChapterNumberAsc(scenarioId);
             String prompt = ScenarioUtils.buildPrompt(
@@ -112,12 +108,10 @@ public class ScenarioService {
             return ScenarioMapper.toDto(scenario);
 
         } else {
-            // Final chapter wrap‑up
             List<UserSelection> allSelections = userSelectionRepository
                     .findByScenarioIdOrderByChapterNumberAsc(scenarioId);
             String recap = ScenarioUtils.buildContextRecap(scenario, allSelections);
 
-            // Compute success/failure
             int totalPoints = scenario.getPointTotal();
             Severity severity = scenario.getCalamity().getSeverity();
             int required = ScenarioUtils.THRESHOLDS.get(severity);
@@ -131,7 +125,6 @@ public class ScenarioService {
                     + "\n\n" + resultLine
                     + "\n\nContext recap:\n" + recap;
 
-            // Ask Gemini for closing narrative
             String closingNarrative = callGemini.apply(prompt).trim();
 
             scenario.setComplete(true);
