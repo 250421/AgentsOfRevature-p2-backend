@@ -26,19 +26,20 @@ public class ScenarioService {
     private final StoryPointOptionRepository storyPointOptionRepository;
     private final GeminiService geminiService;
 
+    // Lambda to send prompt to Gemini and return text
     private final Function<String, String> callGemini = prompt ->
             new Client()
                     .models
                     .generateContent("gemini-2.0-flash-001", prompt, null)
                     .text();
 
-    public ScenarioDto startScenario(ScenarioRequestDto request){
-        var calamity = calamityRepository.findById(request.calamityId())
+    public ScenarioDto startScenario(ScenarioRequestDto request) {
+        Calamity calamity = calamityRepository.findById(request.calamityId())
                 .orElseThrow(() -> new EntityNotFoundException("Calamity not found"));
-        var user    = userRepository.findById(request.userId())
+        User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        var scenario = new Scenario();
+        Scenario scenario = new Scenario();
         scenario.setCalamity(calamity);
         scenario.setUser(user);
         scenario.setHero1(request.hero1());
@@ -48,17 +49,17 @@ public class ScenarioService {
         scenario.setPointTotal(0);
         scenarioRepository.save(scenario);
 
-        var selections = userSelectionRepository.findByScenarioIdOrderByChapterNumberAsc(scenario.getId());
-        var prompt     = ScenarioUtils.buildPrompt(request, scenario, selections);
+        List<UserSelection> selections = userSelectionRepository
+                .findByScenarioIdOrderByChapterNumberAsc(scenario.getId());
+        String prompt = ScenarioUtils.buildPrompt(request, scenario, selections);
 
-        // Retry‐wrapped call
         String raw = geminiService.getValidResponse(
                 prompt,
                 ScenarioUtils::isValidGeminiResponse,
                 callGemini
         );
 
-        var firstPoint = ScenarioUtils.parseStoryPoint(raw, scenario, 1);
+        StoryPoint firstPoint = ScenarioUtils.parseStoryPoint(raw, scenario, 1);
         scenario.getStoryPoints().add(firstPoint);
         scenarioRepository.save(scenario);
 
@@ -66,22 +67,22 @@ public class ScenarioService {
     }
 
     public ScenarioDto continueScenario(Long scenarioId, ContinueScenarioRequest req) {
-        var scenario = scenarioRepository.findById(scenarioId)
+        Scenario scenario = scenarioRepository.findById(scenarioId)
                 .orElseThrow(() -> new EntityNotFoundException("Scenario not found"));
 
-        var picked = storyPointOptionRepository.findById(req.selectedOptionId())
+        StoryPointOption picked = storyPointOptionRepository.findById(req.selectedOptionId())
                 .orElseThrow(() -> new EntityNotFoundException("Option not found"));
 
-        // Record user selection
+        // 1) Persist user's selection
         int currentChapter = scenario.getChapterCount();
-        var sel = new UserSelection();
+        UserSelection sel = new UserSelection();
         sel.setScenario(scenario);
         sel.setStoryPoint(picked.getStoryPoint());
         sel.setSelectedOption(picked);
         sel.setChapterNumber(currentChapter);
         userSelectionRepository.save(sel);
 
-        // Update scenario totals
+        // 2) Update totals
         scenario.setPointTotal(scenario.getPointTotal() + picked.getPoints());
         scenario.setChapterCount(currentChapter + 1);
         scenarioRepository.save(scenario);
@@ -89,10 +90,10 @@ public class ScenarioService {
         int nextChapter = scenario.getChapterCount();
 
         if (nextChapter <= 5) {
-            // Normal chapter 2–5 flow
-            var allSelections = userSelectionRepository
+            // Chapters 2–5 flow
+            List<UserSelection> allSelections = userSelectionRepository
                     .findByScenarioIdOrderByChapterNumberAsc(scenarioId);
-            var prompt = ScenarioUtils.buildPrompt(
+            String prompt = ScenarioUtils.buildPrompt(
                     ScenarioUtils.toRequestDto(scenario),
                     scenario,
                     allSelections
@@ -104,22 +105,33 @@ public class ScenarioService {
                     callGemini
             );
 
-            var nextPoint = ScenarioUtils.parseStoryPoint(raw, scenario, nextChapter);
+            StoryPoint nextPoint = ScenarioUtils.parseStoryPoint(raw, scenario, nextChapter);
             scenario.getStoryPoints().add(nextPoint);
             scenarioRepository.save(scenario);
 
             return ScenarioMapper.toDto(scenario);
 
         } else {
-            // Final chapter 5 wrap‑up
-            var recap = ScenarioUtils.buildContextRecap(
-                    scenario,
-                    userSelectionRepository.findByScenarioIdOrderByChapterNumberAsc(scenarioId)
-            );
-            var prompt = ScenarioUtils.FINAL_PROMPT +
-                    "\n\nContext recap:\n" + recap;
+            // Final chapter wrap‑up
+            List<UserSelection> allSelections = userSelectionRepository
+                    .findByScenarioIdOrderByChapterNumberAsc(scenarioId);
+            String recap = ScenarioUtils.buildContextRecap(scenario, allSelections);
 
-            // For final, we don’t need delimiter validation
+            // Compute success/failure
+            int totalPoints = scenario.getPointTotal();
+            Severity severity = scenario.getCalamity().getSeverity();
+            int required = ScenarioUtils.THRESHOLDS.get(severity);
+            boolean success = totalPoints >= required;
+
+            String resultLine = success
+                    ? "RESULT: Mission succeeded with " + totalPoints + " points (needed " + required + ")."
+                    : "RESULT: Mission failed with only " + totalPoints + " points (needed " + required + ").";
+
+            String prompt = ScenarioUtils.FINAL_PROMPT
+                    + "\n\n" + resultLine
+                    + "\n\nContext recap:\n" + recap;
+
+            // Ask Gemini for closing narrative
             String closingNarrative = callGemini.apply(prompt).trim();
 
             scenario.setComplete(true);

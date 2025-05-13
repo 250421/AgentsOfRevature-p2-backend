@@ -3,14 +3,12 @@ package com.anonymousibex.Agents.of.Revature.util;
 import com.anonymousibex.Agents.of.Revature.dto.ScenarioDto;
 import com.anonymousibex.Agents.of.Revature.dto.ScenarioRequestDto;
 import com.anonymousibex.Agents.of.Revature.dto.StoryPointDto;
-import com.anonymousibex.Agents.of.Revature.model.Scenario;
-import com.anonymousibex.Agents.of.Revature.model.StoryPoint;
-import com.anonymousibex.Agents.of.Revature.model.StoryPointOption;
-import com.anonymousibex.Agents.of.Revature.model.UserSelection;
+import com.anonymousibex.Agents.of.Revature.model.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class ScenarioUtils {
     static final public String PROMPT =
@@ -149,4 +147,10 @@ public class ScenarioUtils {
         return raw.split(">").length == 7;
     }
 
+    public static final Map<Severity, Integer> THRESHOLDS = Map.of(
+            Severity.CRITICAL, 14,
+            Severity.HIGH,     12,
+            Severity.MEDIUM,   10,
+            Severity.LOW,       8
+    );
 }
