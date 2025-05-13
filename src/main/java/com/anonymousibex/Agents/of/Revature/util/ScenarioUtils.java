@@ -8,11 +8,12 @@ import com.anonymousibex.Agents.of.Revature.model.StoryPoint;
 import com.anonymousibex.Agents.of.Revature.model.StoryPointOption;
 import com.anonymousibex.Agents.of.Revature.model.UserSelection;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class ScenarioUtils {
-    static final public String PROMPT = "I am an agent who works directly with a stable of heros and superheros. I respond to missions, called calamities, by selecting three heros to bring with me to save the day. There is always a villain behind the calamity, but I don't know who it is until I arrive at the scene. Your job will be to recieve the mission details, the heros I brought with me, the severity of the calamity, and the chapter of the adventure, and then you will generate a text adventure where I will get to choose from 3 options. Each text adventure will be 5 chapters long. Any chapters that have already occurred will be provided for context. The villain will always be revealed in chapter 1. The difficulty in succeeding in saving the day should depend on the calamity severity (critical, high, medium, low). The difficuly will not change as the chapters progress. After my selection on chapter 5, the final chapter of the scenario, you need to generate a closing scenario and tell me if I've succeeded or failed. You should also provide the point values for each choice. These will be obscured from the user, but I need them to give back to you for each successive chapter so you know the running point total. A bonus point should be awarded if I effectively utilize a hero from the same universe as the villain, and the most points I can win in a round is 3, including the bonus point. For critical missions, I'll need 14 points to succeed (maximum of 15 total). For high severity missions I'll need 12, for medium I'll need 10, and for low I'll need 8. You need to return the scenario and my options to me in the exact format provided with no additional text, styling, or formatting: This is an example scenario.<>This is the first option.<>2<>This is the second option.<>1<>This is the third and final option for this scenario.<>1<> The context is as follows:";
+    static final public String PROMPT = "I am an agent who works directly with a stable of heros and superheros. I respond to missions, called calamities, by selecting three heros to bring with me to save the day. There is always a villain behind the calamity, but I don't know who it is until I arrive at the scene. Your job will be to recieve the mission details, the heros I brought with me, the severity of the calamity, and the chapter of the adventure, and then you will generate a text adventure where I will get to choose from 3 options. Each text adventure will be 5 chapters long. Any chapters that have already occurred will be provided for context. The villain will always be revealed in chapter 1. The difficulty in succeeding in saving the day should depend on the calamity severity (critical, high, medium, low). The difficuly will not change as the chapters progress. After my selection on chapter 5, the final chapter of the scenario, you need to generate a closing scenario and tell me if I've succeeded or failed. You should also provide the point values for each choice. These will be obscured from the user, but I need them to give back to you for each successive chapter so you know the running point total. A bonus point should be awarded if I effectively utilize a hero from the same universe as the villain, and the most points I can win in a round is 3, including the bonus point. For critical missions, I'll need 14 points to succeed (maximum of 15 total). For high severity missions I'll need 12, for medium I'll need 10, and for low I'll need 8. You need to return the scenario and my options to me in the exact format provided with no additional text, styling, or formatting: This is an example scenario.<>This is the first option.<>2<>This is the second option.<>1<>This is the third and final option for this scenario.<>1   --The context is as follows:";
 
     public static String buildPrompt(ScenarioRequestDto dto, Scenario scenario, List<UserSelection> selections) {
         StringBuilder promptBuilder = new StringBuilder(PROMPT);
@@ -58,21 +59,52 @@ public class ScenarioUtils {
     }
 
     public static StoryPoint parseStoryPoint(String raw, Scenario scenario, int chapterNum) {
-        String[] parts = raw.split("<>");
+        System.out.println("Parsing StoryPoint raw:\n" + raw);
+
+        String[] tokens = raw.split("<>");
+        String storyText = tokens[0].trim();
+
+        List<StoryPointOption> options = new ArrayList<>();
+        for (int i = 1; i + 1 < tokens.length; i += 2) {
+            String optText = tokens[i].trim();
+            String ptsToken = tokens[i + 1].trim().replaceAll("\\D+$", "");
+            int pts = Integer.parseInt(ptsToken);
+
+            // 1. Construct the option without a storyPoint
+            StoryPointOption opt = new StoryPointOption(optText, pts);
+            options.add(opt);
+        }
+
+        if (options.size() != 3) {
+            throw new IllegalArgumentException(
+                    "Expected exactly 3 options but found " + options.size() +
+                            "\nRaw response:\n" + raw
+            );
+        }
+
+        // 2. Now build the StoryPoint and attach options
         StoryPoint point = new StoryPoint();
         point.setScenario(scenario);
-        point.setText(parts[0]);
-
-        List<StoryPointOption> options = List.of(
-                new StoryPointOption(parts[1], Integer.parseInt(parts[2])),
-                new StoryPointOption(parts[3], Integer.parseInt(parts[4])),
-                new StoryPointOption(parts[5], Integer.parseInt(parts[6]))
-        );
-        options.forEach(opt -> opt.setStoryPoint(point));
-
-        point.setOptions(options);
+        point.setText(storyText);
         point.setChapterNumber(chapterNum);
+
+        // 3. Wire the options to this point
+        options.forEach(opt -> opt.setStoryPoint(point));
+        point.setOptions(options);
+
         return point;
+    }
+
+
+
+    public static ScenarioRequestDto toRequestDto(Scenario scenario) {
+        return new ScenarioRequestDto(
+                scenario.getUser().getId(),
+                scenario.getCalamity().getId(),
+                scenario.getHero1(),
+                scenario.getHero2(),
+                scenario.getHero3()
+        );
     }
 
 }
