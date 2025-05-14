@@ -11,7 +11,9 @@ import com.anonymousibex.Agents.of.Revature.util.ScenarioUtils;
 import com.google.genai.Client;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.function.Function;
@@ -26,6 +28,7 @@ public class ScenarioService {
     private final UserSelectionRepository userSelectionRepository;
     private final StoryPointOptionRepository storyPointOptionRepository;
     private final GeminiService geminiService;
+    private final ResultsService resultsService;
 
     private final Function<String, String> callGemini = prompt ->
             new Client()
@@ -37,7 +40,7 @@ public class ScenarioService {
         Calamity calamity = calamityRepository.findById(request.calamityId())
                 .orElseThrow(() -> new CalamityNotFoundException("Calamity not found"));
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         Scenario scenario = new Scenario();
         scenario.setCalamity(calamity);
@@ -131,6 +134,9 @@ public class ScenarioService {
             scenario.setComplete(true);
             scenario.setClosing(closingNarrative);
             scenarioRepository.save(scenario);
+
+            int repGained = success? totalPoints : 0;
+            resultsService.addResult(scenario, success, repGained);
 
             return ScenarioMapper.toDto(scenario);
         }

@@ -40,9 +40,9 @@ public class ResultsController {
         List <ResultsDto> response = results.stream()
         .map(element -> {
             return new ResultsDto(
-                element.getUser_id(),
+                element.getUser().getId(),
                 element.getUser().getUsername(),
-                element.getCalamity_id(),
+                element.getCalamity().getId(),
                 element.isDidWin(),
                 element.getRepGained()
             );
@@ -57,9 +57,9 @@ public class ResultsController {
          List <ResultsDto> response = results.stream()
         .map(element -> {
             return new ResultsDto(
-                element.getUser_id(),
+                element.getUser().getId(),
                 element.getUser().getUsername(),
-                element.getCalamity_id(),
+                element.getCalamity().getId(),
                 element.isDidWin(),
                 element.getRepGained()
             );
@@ -69,12 +69,12 @@ public class ResultsController {
 
     }
 
-    @PostMapping("/addResult")
-    public ResponseEntity<ResultsDto> AddResult(@RequestBody Results result) {
-        Results addedResult = resultsService.AddResult(result);   
-        ResultsDto response = new ResultsDto(addedResult.getUser_id(),addedResult.getUser().getUsername(), addedResult.getCalamity_id(), addedResult.isDidWin(), addedResult.getRepGained());
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+//    @PostMapping("/addResult")
+//    public ResponseEntity<ResultsDto> AddResult(@RequestBody Results result) {
+//        Results addedResult = resultsService.AddResult(result);
+//        ResultsDto response = new ResultsDto(addedResult.getUser_id(),addedResult.getUser().getUsername(), addedResult.getCalamity_id(), addedResult.isDidWin(), addedResult.getRepGained());
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
 
     @GetMapping("/calamitySelections/{id}")
     public ResponseEntity<CalamitySelectionsDto> getCalamitySelections(@PathVariable Long id){

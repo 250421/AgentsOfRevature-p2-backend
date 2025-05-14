@@ -10,7 +10,7 @@ import lombok.Data;
 public class ResultsDto {
     private Long userId;
     private String username;
-    private Long calamity_id;
+    private Long calamityId;
     private boolean didWin;
     private int repGained;
 }

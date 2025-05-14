@@ -12,67 +12,72 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UsernameAlreadyExistsException.class)
-    public ResponseEntity<ResponseDto> handleUsernameTaken(UsernameAlreadyExistsException ex){
+    public ResponseEntity<ResponseDto> handleUsernameTaken(UsernameAlreadyExistsException ex) {
         return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ResponseDto> handleInvalidCredentials(InvalidCredentialsException ex){
+    public ResponseEntity<ResponseDto> handleInvalidCredentials(InvalidCredentialsException ex) {
         return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ResponseDto> handleUnauthorizedUser(UnauthorizedException ex){
+    public ResponseEntity<ResponseDto> handleUnauthorizedUser(UnauthorizedException ex) {
         return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ResponseDto> handleUnkownUser(UsernameNotFoundException ex){
+    public ResponseEntity<ResponseDto> handleUnkownUser(UsernameNotFoundException ex) {
         return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidUsernameException.class)
-    public ResponseEntity<ResponseDto> handleShortUsername(InvalidUsernameException ex){
+    public ResponseEntity<ResponseDto> handleShortUsername(InvalidUsernameException ex) {
         return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<ResponseDto> handleInvalidPassword(InvalidPasswordException ex){
+    public ResponseEntity<ResponseDto> handleInvalidPassword(InvalidPasswordException ex) {
         return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SessionAlreadyExistsException.class)
-    public ResponseEntity<ResponseDto> handleExistingSession(SessionAlreadyExistsException ex){
+    public ResponseEntity<ResponseDto> handleExistingSession(SessionAlreadyExistsException ex) {
         return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(NoActiveSessionException.class)
-    public ResponseEntity<ResponseDto> handleNoActiveSession(NoActiveSessionException ex){
+    public ResponseEntity<ResponseDto> handleNoActiveSession(NoActiveSessionException ex) {
         return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ResponseDto> handleAccessDenied(AccessDeniedException ex){
+    public ResponseEntity<ResponseDto> handleAccessDenied(AccessDeniedException ex) {
         return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(ItemNameExistsException.class)
-    public ResponseEntity<ResponseDto> handleItemNameExists(ItemNameExistsException ex){
+    public ResponseEntity<ResponseDto> handleItemNameExists(ItemNameExistsException ex) {
         return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ResponseDto> handleItemNotFound(NoSuchElementException ex){
+    public ResponseEntity<ResponseDto> handleItemNotFound(NoSuchElementException ex) {
         return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-     @ExceptionHandler(NoUserResultsFoundException.class)
-    public ResponseEntity<ResponseDto> handleNoUserResultsFound(NoUserResultsFoundException ex){
-        return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(NoUserResultsFoundException.class)
+    public ResponseEntity<ResponseDto> handleNoUserResultsFound(NoUserResultsFoundException ex) {
+        return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-     @ExceptionHandler(CalamityNotFoundException.class)
-    public ResponseEntity<ResponseDto> CalamityNotFoundException(CalamityNotFoundException ex){
-        return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(CalamityNotFoundException.class)
+    public ResponseEntity<ResponseDto> CalamityNotFoundException(CalamityNotFoundException ex) {
+        return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ScenarioNotFoundException.class)
+    public ResponseEntity<ResponseDto> ScenarioNotFoundHandler(ScenarioNotFoundException ex) {
+        return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

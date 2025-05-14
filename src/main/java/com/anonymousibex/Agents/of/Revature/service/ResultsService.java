@@ -3,6 +3,8 @@ package com.anonymousibex.Agents.of.Revature.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.anonymousibex.Agents.of.Revature.model.Scenario;
+import com.anonymousibex.Agents.of.Revature.repository.ScenarioRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ResultsService {
     private final ResultsRepository resultsRepository;
-    private final CalamityRepository calamityRepository;
-    private final UserRepository userRepository;
+    private final ScenarioRepository scenarioRepository;
 
     public List<Results> getAllResults(){
         List<Results> results = resultsRepository.findAll();
@@ -36,17 +37,19 @@ public class ResultsService {
         throw new NoUserResultsFoundException("There are not results for this user");
     }
 
-    public Results AddResult(Results result){
-        if(userRepository.findById(result.getUser_id()).isPresent()){
-            result.setUser(userRepository.findById(result.getUser_id()).get());
-            if(calamityRepository.findById(result.getCalamity_id()).isPresent()){
-                result.setCalamity(calamityRepository.findById(result.getCalamity_id()).get());
-                resultsRepository.save(result);
-                return result;
-            }
-            throw new CalamityNotFoundException("Calamity not found.");
-        }
-        throw new UsernameNotFoundException("User not found.");
+    public Results addResult(Scenario scenario, boolean didWin, int repGained) {
+//        Scenario scenario = scenarioRepository.findById(scenarioId)
+//                .orElseThrow(() -> new ScenarioNotFoundException(
+//                        "Scenario not found: " + scenarioId));
+
+        Results result = new Results();
+        result.setScenario(scenario);
+        result.setUser(scenario.getUser());
+        result.setCalamity(scenario.getCalamity());
+        result.setDidWin(didWin);
+        result.setRepGained(repGained);
+
+        return resultsRepository.save(result);
     }
 
     public Results UpdateResult(Results result){
