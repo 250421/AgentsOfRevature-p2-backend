@@ -65,4 +65,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseDto> handleItemNotFound(NoSuchElementException ex){
         return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+     @ExceptionHandler(NoUserResultsFoundException.class)
+    public ResponseEntity<ResponseDto> handleNoUserResultsFound(NoUserResultsFoundException ex){
+        return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+     @ExceptionHandler(CalamityNotFoundException.class)
+    public ResponseEntity<ResponseDto> CalamityNotFoundException(CalamityNotFoundException ex){
+        return ResponseUtils.buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
