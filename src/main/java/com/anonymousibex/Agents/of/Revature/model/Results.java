@@ -14,22 +14,20 @@ public class Results {
 
     
     @ManyToOne
-    @JoinColumn(name = "User_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Column(name = "user_id", insertable=false, updatable=false)
-    private Long user_id;
+    @OneToOne
+    @JoinColumn(name = "scenario_id", referencedColumnName = "id")
+    private Scenario scenario;
 
     @ManyToOne
     @JoinColumn(name = "calamity_id", referencedColumnName = "id")
     private Calamity calamity;
 
-    @Column(name = "calamity_id", insertable=false, updatable=false)
-    private Long calamity_id;
-
-    @Column(name = "didWin")
+    @Column(name = "did_win")
     private boolean didWin;
 
-    @Column(name = "repGained")
+    @Column(name = "rep_gained")
     private int repGained;
 }

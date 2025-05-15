@@ -1,8 +1,6 @@
 package com.anonymousibex.Agents.of.Revature.util;
 
-import com.anonymousibex.Agents.of.Revature.dto.ScenarioDto;
 import com.anonymousibex.Agents.of.Revature.dto.ScenarioRequestDto;
-import com.anonymousibex.Agents.of.Revature.dto.StoryPointDto;
 import com.anonymousibex.Agents.of.Revature.model.*;
 
 import java.util.ArrayList;
@@ -12,9 +10,13 @@ import java.util.Map;
 
 public class ScenarioUtils {
     static final public String PROMPT =
-            "You are writing a 5-chapter interactive superhero story. Each chapter contains a narrative followed by exactly 3 choices. " +
+            "You are writing a 5-chapter interactive superhero story. "+
+                    "The user is a special agent responding to a calamity with a team of 3 heroes they have selected. "+
+                    "Each chapter contains a narrative followed by exactly 3 choices. " +
+                    "The choices are for the user to decide how to best utilize their hero team given the chapter context. " +
                     "Each choice must include a point value from 0 to 3. The chapter’s story difficulty depends on the calamity’s severity: critical, high, medium, or low. " +
                     "Bonus points (up to +1) are awarded if the choice effectively uses a hero from the villain’s universe. " +
+                    "Do not share which options are contain bonus points. "+
                     "You must format your response using the '>' character as a delimiter and **nothing else**. The formatting is critical — I am parsing your response automatically.\n\n" +
 
                     "Required format:\n" +
@@ -25,7 +27,8 @@ public class ScenarioUtils {
 
                     "**Do not include any other symbols, explanations, or text outside of this format. This is essential.**\n\n" +
 
-                    "You will be provided with the team of heroes, the calamity, current chapter number, and a recap of previous chapters. " +
+                    "You will be provided with the team of heroes, the calamity, the villain responsible, current chapter number, and a recap of previous chapters. " +
+                    "The first chapter scenario should include a reveal of the villain. Each successive chapter scenario should include a dramatic unfolding of the user's previous choice before setting the stage for the next choice. "+
                     "Now generate the story and response for the current chapter.\n\n" +
 
                     "The context is as follows:";
@@ -38,36 +41,32 @@ public class ScenarioUtils {
                     "to the heroes, reveals whether they succeeded or failed, and states the final point total. " +
                     "Format your response as a single paragraph with no special delimiters.";
 
-    public static String buildPrompt(ScenarioRequestDto dto, Scenario scenario, List<UserSelection> selections) {
+    public static String buildPrompt(ScenarioRequestDto dto, Scenario scenario, List<StoryPointSelection> selections) {
         StringBuilder promptBuilder = new StringBuilder(PROMPT);
 
-        // Hero team
         promptBuilder.append("\nMission team: ")
                 .append(dto.hero1()).append(", ")
                 .append(dto.hero2()).append(", ")
                 .append(dto.hero3()).append(".");
 
-        // Calamity description & severity
         promptBuilder.append("\nCalamity: ")
                 .append(scenario.getCalamity().getTitle())
                 .append(" — ").append(scenario.getCalamity().getDescription())
+                .append(" -- Villain responsible: ").append(scenario.getCalamity().getVillain())
                 .append(" (Severity: ").append(scenario.getCalamity().getSeverity()).append(")");
 
-        // Chapter info
         promptBuilder.append("\nThis is Chapter ")
                 .append(scenario.getChapterCount())
                 .append(" of 5.");
 
-        // Running point total
         promptBuilder.append("\nMy current point total is: ")
                 .append(scenario.getPointTotal())
                 .append(".");
 
-        // Add previous story context if it exists
         if (selections != null && !selections.isEmpty()) {
             promptBuilder.append("\n\nThe context is as follows:\n");
             selections.stream()
-                    .sorted(Comparator.comparingInt(UserSelection::getChapterNumber))
+                    .sorted(Comparator.comparingInt(StoryPointSelection::getChapterNumber))
                     .forEach(selection -> {
                         StoryPoint point = selection.getStoryPoint();
                         promptBuilder.append("Chapter ").append(selection.getChapterNumber()).append(": ")
@@ -94,7 +93,6 @@ public class ScenarioUtils {
             String ptsToken = tokens[i + 1].trim().replaceAll("\\D+$", "");
             int pts = Integer.parseInt(ptsToken);
 
-            // 1. Construct the option without a storyPoint
             StoryPointOption opt = new StoryPointOption(optText, pts);
             options.add(opt);
         }
@@ -106,22 +104,20 @@ public class ScenarioUtils {
             );
         }
 
-        // 2. Now build the StoryPoint and attach options
         StoryPoint point = new StoryPoint();
         point.setScenario(scenario);
         point.setText(storyText);
         point.setChapterNumber(chapterNum);
 
-        // 3. Wire the options to this point
         options.forEach(opt -> opt.setStoryPoint(point));
         point.setOptions(options);
 
         return point;
     }
 
-    public static String buildContextRecap(Scenario scenario, List<UserSelection> selections) {
+    public static String buildContextRecap(Scenario scenario, List<StoryPointSelection> selections) {
         var sb = new StringBuilder();
-        for (UserSelection sel : selections) {
+        for (StoryPointSelection sel : selections) {
             sb.append("Chapter ")
                     .append(sel.getChapterNumber())
                     .append(": ")
@@ -134,12 +130,12 @@ public class ScenarioUtils {
     }
 
     public static ScenarioRequestDto toRequestDto(Scenario scenario) {
+        HeroSelection heroSelection = scenario.getHeroSelection();
         return new ScenarioRequestDto(
-                scenario.getUser().getId(),
                 scenario.getCalamity().getId(),
-                scenario.getHero1(),
-                scenario.getHero2(),
-                scenario.getHero3()
+                heroSelection.getHero1(),
+                heroSelection.getHero2(),
+                heroSelection.getHero3()
         );
     }
 

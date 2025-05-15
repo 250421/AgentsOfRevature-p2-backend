@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "user_selections")
-public class UserSelection {
+@Table(name = "story_point_selections")
+public class StoryPointSelection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

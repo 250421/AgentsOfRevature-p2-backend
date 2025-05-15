@@ -8,9 +8,10 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class ResultsDto {
+    private Long id;
     private Long userId;
     private String username;
-    private Long calamity_id;
+    private Long calamityId;
     private boolean didWin;
     private int repGained;
 }

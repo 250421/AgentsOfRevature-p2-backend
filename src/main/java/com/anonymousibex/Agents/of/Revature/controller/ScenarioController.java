@@ -5,6 +5,7 @@ import com.anonymousibex.Agents.of.Revature.dto.ScenarioDto;
 import com.anonymousibex.Agents.of.Revature.dto.ScenarioRequestDto;
 import com.anonymousibex.Agents.of.Revature.model.Scenario;
 import com.anonymousibex.Agents.of.Revature.service.ScenarioService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,8 @@ public class ScenarioController {
     private final ScenarioService scenarioService;
 
     @PostMapping
-    public ResponseEntity<ScenarioDto> startScenario(@RequestBody ScenarioRequestDto requestDto) {
-        ScenarioDto scenarioDto = scenarioService.startScenario(requestDto);
+    public ResponseEntity<ScenarioDto> startScenario(@RequestBody ScenarioRequestDto requestDto, HttpServletRequest httpRequest) {
+        ScenarioDto scenarioDto = scenarioService.startScenario(requestDto, httpRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(scenarioDto);
     }
 
