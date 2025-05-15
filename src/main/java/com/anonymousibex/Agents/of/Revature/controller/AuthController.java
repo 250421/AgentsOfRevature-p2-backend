@@ -52,7 +52,7 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<UserDto> getCurrentUser(HttpServletRequest request){
-        UserDto user = userService.getCurrentUserBySession(request);
+        UserDto user = UserUtils.toUserDto(userService.getCurrentUserBySession(request));
         return ResponseEntity.ok(user);
     }
 }

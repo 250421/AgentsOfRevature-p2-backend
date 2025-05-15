@@ -59,7 +59,7 @@ public class UserService {
         return userRepository.findById(userId);
     }
 
-    public UserDto getCurrentUserBySession(HttpServletRequest request){
+    public User getCurrentUserBySession(HttpServletRequest request){
         HttpSession session = request.getSession(false);
 
         if(session == null || session.getAttribute("userId") == null){
@@ -70,7 +70,7 @@ public class UserService {
         User user =  userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found."));
 
-        return UserUtils.toUserDto(user);
+        return user;
     }
 
     public void ensureNoActiveSession(HttpServletRequest request) {
