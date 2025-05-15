@@ -24,13 +24,12 @@ import java.util.function.Function;
 public class ScenarioService {
 
     private final CalamityRepository calamityRepository;
-    private final UserRepository userRepository;
     private final ScenarioRepository scenarioRepository;
     private final StoryPointSelectionRepository storyPointSelectionRepository;
     private final StoryPointOptionRepository storyPointOptionRepository;
     private final GeminiService geminiService;
     private final ResultsService resultsService;
-    private final HeroSelectionRepository heroSelectionRepository;
+    private final UserService userService;
 
 
     private final Function<String, String> callGemini = prompt ->
@@ -39,11 +38,10 @@ public class ScenarioService {
                     .generateContent("gemini-2.0-flash-001", prompt, null)
                     .text();
 
-    public ScenarioDto startScenario(ScenarioRequestDto requestDto) {
+    public ScenarioDto startScenario(ScenarioRequestDto requestDto, HttpServletRequest httpRequest) {
         Calamity calamity = calamityRepository.findById(requestDto.calamityId())
                 .orElseThrow(() -> new CalamityNotFoundException("Calamity not found"));
-        User user = userRepository.findById(requestDto.userId())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+        User user = userService.getCurrentUserBySession(httpRequest);
 
         HeroSelection heroSelection = new HeroSelection();
         heroSelection.setHero1(requestDto.hero1());

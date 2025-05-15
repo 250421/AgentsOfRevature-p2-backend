@@ -27,8 +27,8 @@ public class ScenarioUtils {
 
                     "**Do not include any other symbols, explanations, or text outside of this format. This is essential.**\n\n" +
 
-                    "You will be provided with the team of heroes, the calamity, current chapter number, and a recap of previous chapters. " +
-                    "Each new chapter scenario should start by describing the action from the most recent option selection, if there was one. "+
+                    "You will be provided with the team of heroes, the calamity, the villain responsible, current chapter number, and a recap of previous chapters. " +
+                    "The first chapter scenario should include a reveal of the villain. Each successive chapter scenario should include a dramatic unfolding of the user's previous choice before setting the stage for the next choice. "+
                     "Now generate the story and response for the current chapter.\n\n" +
 
                     "The context is as follows:";
@@ -93,7 +93,6 @@ public class ScenarioUtils {
             String ptsToken = tokens[i + 1].trim().replaceAll("\\D+$", "");
             int pts = Integer.parseInt(ptsToken);
 
-            // 1. Construct the option without a storyPoint
             StoryPointOption opt = new StoryPointOption(optText, pts);
             options.add(opt);
         }
@@ -133,7 +132,6 @@ public class ScenarioUtils {
     public static ScenarioRequestDto toRequestDto(Scenario scenario) {
         HeroSelection heroSelection = scenario.getHeroSelection();
         return new ScenarioRequestDto(
-                scenario.getUser().getId(),
                 scenario.getCalamity().getId(),
                 heroSelection.getHero1(),
                 heroSelection.getHero2(),

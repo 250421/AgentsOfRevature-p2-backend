@@ -64,3 +64,4 @@ INSERT INTO calamities (title, reported, location, description, villain, severit
   ('Tea Whistle', '85 mins ago', 'London, Clock Tower',
    'Steam valves in the control room hissed in a rhythmic pattern, unsettling the on-duty technicians.', 'Mad Hatter', 'LOW')
 ON CONFLICT (title) DO NOTHING;
+
