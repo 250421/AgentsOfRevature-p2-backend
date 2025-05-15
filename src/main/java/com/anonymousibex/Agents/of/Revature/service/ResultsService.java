@@ -23,14 +23,14 @@ public class ResultsService {
     private final ResultsRepository resultsRepository;
     private final ScenarioRepository scenarioRepository;
 
-    public List<Results> getAllResults(){
+    public List<Results> getAllResults() {
         List<Results> results = resultsRepository.findAll();
         return results;
     }
 
-     public List<Results> getAllUserResults(Long userId){
+    public List<Results> getAllUserResults(Long userId) {
         Optional<List<Results>> results = resultsRepository.findByUserId(userId);
-        if(results.isPresent() && !results.get().isEmpty()){
+        if (results.isPresent() && !results.get().isEmpty()) {
             List<Results> userResults = results.get();
             return userResults;
         }
@@ -38,9 +38,9 @@ public class ResultsService {
     }
 
     public Results addResult(Scenario scenario, boolean didWin, int repGained) {
-//        Scenario scenario = scenarioRepository.findById(scenarioId)
-//                .orElseThrow(() -> new ScenarioNotFoundException(
-//                        "Scenario not found: " + scenarioId));
+        // Scenario scenario = scenarioRepository.findById(scenarioId)
+        // .orElseThrow(() -> new ScenarioNotFoundException(
+        // "Scenario not found: " + scenarioId));
 
         Results result = new Results();
         result.setScenario(scenario);
@@ -52,16 +52,16 @@ public class ResultsService {
         return resultsRepository.save(result);
     }
 
-    public Results UpdateResult(Results result){
-        if(resultsRepository.findById(result.getId()).isPresent()){
+    public Results UpdateResult(Results result) {
+        if (resultsRepository.findById(result.getId()).isPresent()) {
             Results resultToUpdate = resultsRepository.findById(result.getId()).get();
             resultToUpdate.setRepGained(result.getRepGained());
             resultToUpdate.setDidWin(result.isDidWin());
             resultsRepository.save(resultToUpdate);
             return resultToUpdate;
         }
-         throw new NoUserResultsFoundException("No result found.");
-       
+        throw new NoUserResultsFoundException("No result found.");
+
     }
 
 }
