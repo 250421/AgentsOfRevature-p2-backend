@@ -4,7 +4,7 @@ import com.anonymousibex.Agents.of.Revature.dto.ResponseDto;
 import com.anonymousibex.Agents.of.Revature.dto.UserDto;
 import com.anonymousibex.Agents.of.Revature.model.User;
 import com.anonymousibex.Agents.of.Revature.service.UserService;
-import com.anonymousibex.Agents.of.Revature.util.ResponseUtils;
+import com.anonymousibex.Agents.of.Revature.util.ExceptionResponseUtils;
 import com.anonymousibex.Agents.of.Revature.util.UserUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,7 +34,7 @@ public class AuthController {
         User authenticatedUser = userService.authenticate(user.getUsername(), user.getPassword());
         HttpSession session = request.getSession(true);
         session.setAttribute("userId", authenticatedUser.getId());
-        return ResponseUtils.buildResponse("Login successful",HttpStatus.OK);
+        return ExceptionResponseUtils.buildResponse("Login successful",HttpStatus.OK);
     }
 
     @PostMapping("/logout")
@@ -47,7 +47,7 @@ public class AuthController {
         }
 
         UserUtils.clearSessionCookie(response);
-        return ResponseUtils.buildResponse("Logout successful",HttpStatus.OK);
+        return ExceptionResponseUtils.buildResponse("Logout successful",HttpStatus.OK);
     }
 
     @GetMapping("/me")

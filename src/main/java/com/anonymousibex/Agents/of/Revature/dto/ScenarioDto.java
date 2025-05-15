@@ -1,5 +1,7 @@
 package com.anonymousibex.Agents.of.Revature.dto;
 
+import com.anonymousibex.Agents.of.Revature.model.HeroSelection;
+
 import java.util.List;
 
 public record ScenarioDto(

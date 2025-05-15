@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class CalamitySelectionsDto {
+public class ScenarioSelectionDto {
     private Long userId;
     private String username;
     private Long calamity_id;

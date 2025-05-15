@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.Instant;
 
-public class ResponseUtils {
+public class ExceptionResponseUtils {
 
     public static ResponseEntity<ResponseDto> buildResponse(String message, HttpStatus status) {
         ResponseDto response = ResponseDto.builder()

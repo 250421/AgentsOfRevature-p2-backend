@@ -8,6 +8,7 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class ResultsDto {
+    private Long id;
     private Long userId;
     private String username;
     private Long calamityId;

@@ -10,6 +10,7 @@ import com.anonymousibex.Agents.of.Revature.util.ScenarioMapper;
 import com.anonymousibex.Agents.of.Revature.util.ScenarioUtils;
 import com.google.genai.Client;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -25,10 +26,12 @@ public class ScenarioService {
     private final CalamityRepository calamityRepository;
     private final UserRepository userRepository;
     private final ScenarioRepository scenarioRepository;
-    private final UserSelectionRepository userSelectionRepository;
+    private final StoryPointSelectionRepository storyPointSelectionRepository;
     private final StoryPointOptionRepository storyPointOptionRepository;
     private final GeminiService geminiService;
     private final ResultsService resultsService;
+    private final HeroSelectionRepository heroSelectionRepository;
+
 
     private final Function<String, String> callGemini = prompt ->
             new Client()
@@ -36,25 +39,30 @@ public class ScenarioService {
                     .generateContent("gemini-2.0-flash-001", prompt, null)
                     .text();
 
-    public ScenarioDto startScenario(ScenarioRequestDto request) {
-        Calamity calamity = calamityRepository.findById(request.calamityId())
+    public ScenarioDto startScenario(ScenarioRequestDto requestDto) {
+        Calamity calamity = calamityRepository.findById(requestDto.calamityId())
                 .orElseThrow(() -> new CalamityNotFoundException("Calamity not found"));
-        User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User user = userRepository.findById(requestDto.userId())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+
+        HeroSelection heroSelection = new HeroSelection();
+        heroSelection.setHero1(requestDto.hero1());
+        heroSelection.setHero2(requestDto.hero2());
+        heroSelection.setHero3(requestDto.hero3());
+        heroSelection.setCalamity(calamity);
+        heroSelection.setUser(user);
 
         Scenario scenario = new Scenario();
         scenario.setCalamity(calamity);
         scenario.setUser(user);
-        scenario.setHero1(request.hero1());
-        scenario.setHero2(request.hero2());
-        scenario.setHero3(request.hero3());
+        scenario.setHeroSelection(heroSelection);
         scenario.setChapterCount(1);
         scenario.setPointTotal(0);
-        scenarioRepository.save(scenario);
+        scenario = scenarioRepository.save(scenario);
 
-        List<UserSelection> selections = userSelectionRepository
+        List<StoryPointSelection> selections = storyPointSelectionRepository
                 .findByScenarioIdOrderByChapterNumberAsc(scenario.getId());
-        String prompt = ScenarioUtils.buildPrompt(request, scenario, selections);
+        String prompt = ScenarioUtils.buildPrompt(requestDto, scenario, selections);
 
         String raw = geminiService.getValidResponse(
                 prompt,
@@ -77,12 +85,12 @@ public class ScenarioService {
                 .orElseThrow(() -> new EntityNotFoundException("Option not found"));
 
         int currentChapter = scenario.getChapterCount();
-        UserSelection sel = new UserSelection();
+        StoryPointSelection sel = new StoryPointSelection();
         sel.setScenario(scenario);
         sel.setStoryPoint(picked.getStoryPoint());
         sel.setSelectedOption(picked);
         sel.setChapterNumber(currentChapter);
-        userSelectionRepository.save(sel);
+        storyPointSelectionRepository.save(sel);
 
         scenario.setPointTotal(scenario.getPointTotal() + picked.getPoints());
         scenario.setChapterCount(currentChapter + 1);
@@ -91,7 +99,7 @@ public class ScenarioService {
         int nextChapter = scenario.getChapterCount();
 
         if (nextChapter <= 5) {
-            List<UserSelection> allSelections = userSelectionRepository
+            List<StoryPointSelection> allSelections = storyPointSelectionRepository
                     .findByScenarioIdOrderByChapterNumberAsc(scenarioId);
             String prompt = ScenarioUtils.buildPrompt(
                     ScenarioUtils.toRequestDto(scenario),
@@ -112,7 +120,7 @@ public class ScenarioService {
             return ScenarioMapper.toDto(scenario);
 
         } else {
-            List<UserSelection> allSelections = userSelectionRepository
+            List<StoryPointSelection> allSelections = storyPointSelectionRepository
                     .findByScenarioIdOrderByChapterNumberAsc(scenarioId);
             String recap = ScenarioUtils.buildContextRecap(scenario, allSelections);
 
