@@ -8,6 +8,7 @@ import java.util.List;
 
 @Entity
 @Data
+@Table(name = "scenarios")
 public class Scenario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,9 +22,9 @@ public class Scenario {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String hero1;
-    private String hero2;
-    private String hero3;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "hero_selection_id", referencedColumnName = "id")
+    private HeroSelection heroSelection;
 
     private int pointTotal = 0;
     private int chapterCount = 0;
@@ -32,11 +33,18 @@ public class Scenario {
     @Column(length = 1000)
     private String closing;
 
+    @OneToOne(
+            mappedBy = "scenario",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Results result;
+
     @OneToMany(mappedBy = "scenario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StoryPoint> storyPoints = new ArrayList<>();
 
-    @Transient
-    public List<String> getHeroes() {
-        return List.of(hero1, hero2, hero3);
-    }
+//    @Transient
+//    public List<String> getHeroes() {
+//        return List.of(hero1, hero2, hero3);
+//    }
 }

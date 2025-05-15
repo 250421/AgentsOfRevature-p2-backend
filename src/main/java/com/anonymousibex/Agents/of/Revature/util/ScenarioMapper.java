@@ -17,7 +17,7 @@ public class ScenarioMapper {
         return new ScenarioDto(
                 scenario.getId(),
                 scenario.getCalamity().getId(),
-                scenario.getHeroes(),
+                scenario.getHeroSelection().getHeroes(),
                 scenario.getPointTotal(),
                 scenario.getChapterCount(),
                 storyPointDtos,

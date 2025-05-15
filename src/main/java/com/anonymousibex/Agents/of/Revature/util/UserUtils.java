@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class UserUtils {
 
-    //Helper function for createUser, checks for password validity
     public static boolean isValidPassword(String password){
         if (password == null || password.length() < 8 || password.length() > 30){
             return false;
@@ -22,7 +21,6 @@ public class UserUtils {
         return hasUpper && hasLower && hasNum && hasSpecial;
     }
 
-    // Helper function for changing user from db to userDto
     public static UserDto toUserDto(User user){
         Long id = user.getId();
         String username = user.getUsername();
