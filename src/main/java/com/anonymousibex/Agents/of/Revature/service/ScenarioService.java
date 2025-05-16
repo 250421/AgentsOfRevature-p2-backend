@@ -13,12 +13,12 @@ import com.google.genai.Client;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.stereotype.Service;
 
 
 import java.util.List;
-import java.util.Optional;
+
 import java.util.function.Function;
 
 @Service
@@ -137,7 +137,13 @@ public class ScenarioService {
                     + "\n\n" + resultLine
                     + "\n\nContext recap:\n" + recap;
 
-            String closingNarrative = callGemini.apply(prompt).trim();
+            String closingNarrative = geminiService
+                    .getValidResponse(
+                            prompt,
+                            raw -> true,
+                            callGemini
+                    )
+                    .trim();
 
             scenario.setComplete(true);
             scenario.setClosing(closingNarrative);
