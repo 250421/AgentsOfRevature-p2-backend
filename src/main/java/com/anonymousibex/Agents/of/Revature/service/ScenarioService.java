@@ -4,6 +4,7 @@ import com.anonymousibex.Agents.of.Revature.dto.ContinueScenarioRequest;
 import com.anonymousibex.Agents.of.Revature.dto.ScenarioDto;
 import com.anonymousibex.Agents.of.Revature.dto.ScenarioRequestDto;
 import com.anonymousibex.Agents.of.Revature.exception.CalamityNotFoundException;
+import com.anonymousibex.Agents.of.Revature.exception.ScenarioNotFoundException;
 import com.anonymousibex.Agents.of.Revature.model.*;
 import com.anonymousibex.Agents.of.Revature.repository.*;
 import com.anonymousibex.Agents.of.Revature.util.ScenarioMapper;
@@ -12,11 +13,12 @@ import com.google.genai.Client;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.stereotype.Service;
 
 
 import java.util.List;
+
 import java.util.function.Function;
 
 @Service
@@ -135,7 +137,13 @@ public class ScenarioService {
                     + "\n\n" + resultLine
                     + "\n\nContext recap:\n" + recap;
 
-            String closingNarrative = callGemini.apply(prompt).trim();
+            String closingNarrative = geminiService
+                    .getValidResponse(
+                            prompt,
+                            raw -> true,
+                            callGemini
+                    )
+                    .trim();
 
             scenario.setComplete(true);
             scenario.setClosing(closingNarrative);
@@ -146,5 +154,19 @@ public class ScenarioService {
 
             return ScenarioMapper.toDto(scenario);
         }
+    }
+
+    public ScenarioDto getScenarioById(Long scenarioId){
+        Scenario scenario = scenarioRepository.findById(scenarioId)
+                .orElseThrow(() -> new ScenarioNotFoundException("Scenario does not exist."));
+        return ScenarioMapper.toDto(scenario);
+    }
+
+    public List<ScenarioDto> getScenarioInProgress(HttpServletRequest request){
+        User user = userService.getCurrentUserBySession(request);
+        List<Scenario> scenarioList = scenarioRepository.findByUserIdAndCompleteFalse(user.getId());
+        List<ScenarioDto> scenarioDtoList = scenarioList.stream().map(scenario -> ScenarioMapper.toDto(scenario))
+                .toList();
+        return scenarioDtoList;
     }
 }
