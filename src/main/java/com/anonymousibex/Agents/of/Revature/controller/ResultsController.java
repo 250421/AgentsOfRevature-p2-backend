@@ -44,7 +44,8 @@ public class ResultsController {
                 element.getUser().getUsername(),
                 element.getCalamity().getId(),
                 element.isDidWin(),
-                element.getRepGained()
+                element.getRepGained(),
+                    element.getScenario().getHeroSelection().getHeroes()
             );
         }).collect(Collectors.toList());
         return ResponseEntity.status(200).body(response);
@@ -62,7 +63,8 @@ public class ResultsController {
                 element.getUser().getUsername(),
                 element.getCalamity().getId(),
                 element.isDidWin(),
-                element.getRepGained()
+                element.getRepGained(),
+                    element.getScenario().getHeroSelection().getHeroes()
             );
         }).collect(Collectors.toList());
 
