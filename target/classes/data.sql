@@ -96,101 +96,44 @@ VALUES
     (11, 'Sonic',        'Donkey-Kong', 'Mario',          15,  204)
 ON CONFLICT (id) DO NOTHING;
 
--- 10 example scenarios
--- 4. Scenarios
-
--- Scenario #2: empty closing
+-- 4. Scenarios (no dollar‑quoting; internal ' become '')
 INSERT INTO scenarios
   (id, chapter_count, closing, complete, point_total, calamity_id, hero_selection_id, user_id)
 VALUES
-  (2, 1, '', false, 0, 1, 2, 206)
-ON CONFLICT (id) DO NOTHING;
-
--- Scenario #8: long closing with $$…$$
-INSERT INTO scenarios
-  (id, chapter_count, closing, complete, point_total, calamity_id, hero_selection_id, user_id)
-VALUES
+  -- empty closing
+  (2, 1, '',          false, 0,  1,  2, 206),
+  -- long closings with '' escaping
   (8, 6,
-   $$The heroes, focusing on apprehending Green Goblin, left the inferno raging. Goblin, surprised by the direct assault, was briefly taken off guard but quickly recovered, unleashing a barrage of pumpkin bombs and sonic attacks. Despite the heroes' valiant efforts, the mission came at great cost—several city blocks lay in ruin by the time they subdued him.$$,
-   true, 8, 12, 8, 202)
-ON CONFLICT (id) DO NOTHING;
-
--- Scenario #1
-INSERT INTO scenarios
-  (id, chapter_count, closing, complete, point_total, calamity_id, hero_selection_id, user_id)
-VALUES
+    'The heroes, focusing on apprehending Green Goblin, left the inferno raging. Goblin, surprised by the direct assault, was briefly taken off guard but quickly recovered, unleashing a barrage of pumpkin bombs and sonic attacks. Despite the heroes'' valiant efforts, the mission came at great cost—several city blocks lay in ruin by the time they subdued him.',
+    true,  8, 12,  8, 202),
   (1, 6,
-   $$The gamble was a desperate one. Spider‑Man, with Venom hot on his heels, skillfully maneuvered towards the Skull Ship. But Venom, sensing the impending danger, swerved at the last moment, narrowly avoiding the brunt of the energy blast. The weapon fired, shattering half the vessel—but your team survived to tell the tale.$$,
-   true, 10, 10, 1, 4)
-ON CONFLICT (id) DO NOTHING;
-
--- Scenario #11
-INSERT INTO scenarios
-  (id, chapter_count, closing, complete, point_total, calamity_id, hero_selection_id, user_id)
-VALUES
+    'The gamble was a desperate one. Spider‑Man, with Venom hot on his heels, skillfully maneuvered towards the Skull Ship. But Venom, sensing the impending danger, swerved at the last moment, narrowly avoiding the brunt of the energy blast. The weapon fired, sending a shockwave that almost tore half the vessel apart—but your team survived to tell the tale.',
+    true, 10, 10,  1,   4),
   (11, 6,
-   $$Mario, now shimmering with invincibility, plunged into the pit. The monstrous figure below was a large hydraulic press, slowly rising to crush the remaining support structure of the casino. With his brief invulnerability, Mario was able to damage the press and escape unscathed.$$,
-   true, 10, 15, 11, 204)
-ON CONFLICT (id) DO NOTHING;
-
--- Scenario #9
-INSERT INTO scenarios
-  (id, chapter_count, closing, complete, point_total, calamity_id, hero_selection_id, user_id)
-VALUES
+    'Mario, now shimmering with invincibility, plunged into the pit. The monstrous figure below was a large hydraulic press, slowly rising to crush the remaining support structure of the casino. With his brief invulnerability, Mario was able to damage the press and escape unscathed.',
+    true, 10, 15, 11, 204),
   (9, 6,
-   $$With the origin of the virus pinpointed, Batman, Iron Man, and Wolverine work in perfect synchronicity. While Batman uploads a counter‑virus, immunizing the global network and neutering Bane's digital weapon, Iron Man reinforces Gotham’s crumbling firewalls.$$,
-   true, 15, 17, 9, 202)
-ON CONFLICT (id) DO NOTHING;
-
--- Scenario #3
-INSERT INTO scenarios
-  (id, chapter_count, closing, complete, point_total, calamity_id, hero_selection_id, user_id)
-VALUES
+    'With the origin of the virus pinpointed, Batman, Ironman, and Wolverine work in perfect synchronicity. While Batman uploads a counter‑virus, immunizing the global markets and neutering Bane''s digital weapon, Ironman reinforces Gotham’s crumbling defenses.',
+    true, 15, 17,  9, 202),
   (3, 6,
-   $$Despite Mario's valiant efforts to inspire hope, Brainiac's psychic assault proves too strong, the accumulated power from the energy collector overwhelming the heroes' defenses. The trapped civilians were freed just before the collider’s meltdown.$$,
-   true, 9,  1, 3, 206)
-ON CONFLICT (id) DO NOTHING;
-
--- Scenario #4
-INSERT INTO scenarios
-  (id, chapter_count, closing, complete, point_total, calamity_id, hero_selection_id, user_id)
-VALUES
+    'Despite Mario''s valiant efforts to inspire hope, Brainiac''s psychic assault proves too strong, the accumulated power from the energy collector overwhelming the heroes'' defenses. The trapped civilians were freed just before the collider’s meltdown.',
+    true,  9,  1,  3, 206),
   (4, 6,
-   $$Frodo's desperate attempt to banish Doomsday proves futile. The creature shrugs off the Ring's power, its rage undeterred, and with a final, earth‑shattering blow, Doomsday tears the control panel apart. The tower’s structural integrity fails; you evacuate just in time.$$,
-   true, 7,  2, 4, 206)
-ON CONFLICT (id) DO NOTHING;
-
--- Scenario #10
-INSERT INTO scenarios
-  (id, chapter_count, closing, complete, point_total, calamity_id, hero_selection_id, user_id)
-VALUES
+    'Frodo''s desperate attempt to banish Doomsday proves futile. The creature shrugs off the Ring''s power, its rage undeterred, and with a final, earth‑shattering blow, Doomsday tears the control panel apart. The tower''s structural integrity fails, and you must evacuate just in time.',
+    true,  7,  2,  4, 206),
   (10, 6,
-   $$Batman's sudden appearance on the train roof throws Shocker off balance, disrupting his final attack. The two engage in a brutal hand‑to‑hand fight amidst the chaos, the tilting train adding another layer of danger. Batman prevails, ordering an emergency stop.$$,
-   true, 12, 19, 10, 203)
-ON CONFLICT (id) DO NOTHING;
-
--- Scenario #5
-INSERT INTO scenarios
-  (id, chapter_count, closing, complete, point_total, calamity_id, hero_selection_id, user_id)
-VALUES
+    'Batman''s sudden appearance on the train roof throws Shocker off balance, disrupting his final attack. The two engage in a brutal hand‑to‑hand fight amidst the chaos, the tilting train adding another layer of danger. Batman prevails, ordering an emergency stop just in time.',
+    true, 12, 19, 10, 203),
   (5, 6,
-   $$Frodo lunged forward, the One Ring pulsing with dark energy, but Galactus swatted him aside like an insect. The Ring clattered away, its power ineffective against the cosmic being. With a triumphant roar, Galactus unleashed his final blast, obliterating the installation.$$,
-   true, 8, 3, 5, 206)
-ON CONFLICT (id) DO NOTHING;
-
--- Scenario #6: long closing must be in $$…$$ because of the apostrophe
-INSERT INTO scenarios
-  (id, chapter_count, closing, complete, point_total, calamity_id, hero_selection_id, user_id)
-VALUES
+    'Frodo lunged forward, the One Ring pulsing with dark energy, but Galactus swatted him aside like an insect. The Ring clattered away, its power ineffective against the cosmic being. With a triumphant roar, Galactus unleashed his final blast, obliterating the installation.',
+    true,  8,  3,  5, 206),
   (6, 6,
-   $$The gamble failed spectacularly as Sailor Moons redirection attempt only managed to slightly alter the course of the Omega Beams, causing them to strike the already weakened magical shields at a different angle. The shields shattered instantly.$$,
-   true, 8, 4, 6, 205)
+    'The gamble failed spectacularly as Sailor Moon''s redirection attempt only managed to slightly alter the course of the Omega Beams, causing them to strike the already weakened magical shields at a different angle. The shields shattered instantly.',
+    true,  8,  4,  6, 205),
+  (7, 6,
+    'Sailor Moon unleashed her ultimate attack, a dazzling blast of lunar energy, but it was too late. Abomination, empowered by the mutated alligators and fueled by rage, swatted the blast aside like an annoying insect. Harry Potter''s protective spells flickered harmlessly.',
+    true,  7, 18,  7, 205)
 ON CONFLICT (id) DO NOTHING;
-
-
-
-
-
 
 -- 51 example story_points
 INSERT INTO story_points
