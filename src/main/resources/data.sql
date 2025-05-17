@@ -420,6 +420,12 @@ ON CONFLICT (id) DO NOTHING;
 -- after all your manual INSERTs…
 
 SELECT setval(
+  pg_get_serial_sequence('users','id'),
+  (SELECT COALESCE(MAX(id),0) FROM scenarios) + 1,
+  false
+);
+
+SELECT setval(
   pg_get_serial_sequence('scenarios','id'),
   (SELECT COALESCE(MAX(id),0) FROM scenarios) + 1,
   false
