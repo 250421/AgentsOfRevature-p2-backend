@@ -416,3 +416,41 @@ INSERT INTO results (id, did_win, rep_gained, calamity_id, scenario_id, user_id)
   (9,  true,  12,  19, 10, 203),
   (10, true,  10,  15, 11, 204)
 ON CONFLICT (id) DO NOTHING;
+
+-- after all your manual INSERTs…
+
+SELECT setval(
+  pg_get_serial_sequence('scenarios','id'),
+  (SELECT COALESCE(MAX(id),0) FROM scenarios) + 1,
+  false
+);
+
+SELECT setval(
+  pg_get_serial_sequence('hero_selections','id'),
+  (SELECT COALESCE(MAX(id),0) FROM hero_selections) + 1,
+  false
+);
+
+SELECT setval(
+  pg_get_serial_sequence('story_points','id'),
+  (SELECT COALESCE(MAX(id),0) FROM story_points) + 1,
+  false
+);
+
+SELECT setval(
+  pg_get_serial_sequence('story_point_options','id'),
+  (SELECT COALESCE(MAX(id),0) FROM story_point_options) + 1,
+  false
+);
+
+SELECT setval(
+  pg_get_serial_sequence('story_point_selections','id'),
+  (SELECT COALESCE(MAX(id),0) FROM story_point_selections) + 1,
+  false
+);
+
+SELECT setval(
+  pg_get_serial_sequence('results','id'),
+  (SELECT COALESCE(MAX(id),0) FROM results) + 1,
+  false
+);
