@@ -17,7 +17,7 @@ public class GeminiService {
     private String googleApiKey;
 
     // This Function is initialized *after* injection in @PostConstruct
-    private Function<String, String> callGemini;
+    public Function<String, String> callGemini;
 
     @PostConstruct
     public void init() {
