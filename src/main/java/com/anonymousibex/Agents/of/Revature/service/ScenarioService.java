@@ -14,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
+import lombok.Value;
 import org.springframework.stereotype.Service;
 
 
@@ -34,11 +35,6 @@ public class ScenarioService {
     private final UserService userService;
 
 
-    private final Function<String, String> callGemini = prompt ->
-            new Client()
-                    .models
-                    .generateContent("gemini-2.0-flash-001", prompt, null)
-                    .text();
 
     public ScenarioDto startScenario(ScenarioRequestDto requestDto, HttpServletRequest httpRequest) {
         Calamity calamity = calamityRepository.findById(requestDto.calamityId())
@@ -66,8 +62,7 @@ public class ScenarioService {
 
         String raw = geminiService.getValidResponse(
                 prompt,
-                ScenarioUtils::isValidGeminiResponse,
-                callGemini
+                ScenarioUtils::isValidGeminiResponse
         );
 
         StoryPoint firstPoint = ScenarioUtils.parseStoryPoint(raw, scenario, 1);
@@ -109,8 +104,7 @@ public class ScenarioService {
 
             String raw = geminiService.getValidResponse(
                     prompt,
-                    ScenarioUtils::isValidGeminiResponse,
-                    callGemini
+                    ScenarioUtils::isValidGeminiResponse
             );
 
             StoryPoint nextPoint = ScenarioUtils.parseStoryPoint(raw, scenario, nextChapter);
@@ -138,11 +132,7 @@ public class ScenarioService {
                     + "\n\nContext recap:\n" + recap;
 
             String closingNarrative = geminiService
-                    .getValidResponse(
-                            prompt,
-                            raw -> true,
-                            callGemini
-                    )
+                    .generate(prompt)
                     .trim();
 
             scenario.setComplete(true);
