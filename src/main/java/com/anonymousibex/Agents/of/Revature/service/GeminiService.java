@@ -12,11 +12,9 @@ public class GeminiService {
 
     private static final int MAX_RETRIES = 2;
 
-    // Spring will inject your env var here:
     @Value("${GOOGLE_API_KEY}")
     private String googleApiKey;
 
-    // This Function is initialized *after* injection in @PostConstruct
     public Function<String, String> callGemini;
 
     @PostConstruct
@@ -30,9 +28,7 @@ public class GeminiService {
                         .text();
     }
 
-    /**
-     * Call Gemini with retries until validator passes.
-     */
+
     public String getValidResponse(
             String prompt,
             Function<String, Boolean> validator
@@ -52,9 +48,7 @@ public class GeminiService {
         );
     }
 
-    /**
-     * A helper for calls that don't require validation (e.g. final closing).
-     */
+
     public String generate(String prompt) {
         return callGemini.apply(prompt);
     }

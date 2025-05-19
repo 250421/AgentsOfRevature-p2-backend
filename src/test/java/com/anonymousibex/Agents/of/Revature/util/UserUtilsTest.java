@@ -1,7 +1,6 @@
 package com.anonymousibex.Agents.of.Revature.util;
 
 import com.anonymousibex.Agents.of.Revature.dto.UserDto;
-import com.anonymousibex.Agents.of.Revature.model.Role;
 import com.anonymousibex.Agents.of.Revature.model.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,13 +48,11 @@ class UserUtilsTest {
         User user = new User();
         user.setId(123L);
         user.setUsername("jdoe");
-        user.setRole(Role.ADMIN);
 
         UserDto dto = UserUtils.toUserDto(user);
 
         assertThat(dto.getId()).isEqualTo(123L);
         assertThat(dto.getUsername()).isEqualTo("jdoe");
-        assertThat(dto.getRole()).isEqualTo(Role.ADMIN);
     }
 
     // ------ clearSessionCookie test ------

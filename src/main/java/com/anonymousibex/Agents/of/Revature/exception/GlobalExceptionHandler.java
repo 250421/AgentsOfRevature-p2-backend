@@ -56,16 +56,6 @@ public class GlobalExceptionHandler {
         return ExceptionResponseUtils.buildResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(ItemNameExistsException.class)
-    public ResponseEntity<ResponseDto> handleItemNameExists(ItemNameExistsException ex) {
-        return ExceptionResponseUtils.buildResponse(ex.getMessage(), HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ResponseDto> handleItemNotFound(NoSuchElementException ex) {
-        return ExceptionResponseUtils.buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(NoUserResultsFoundException.class)
     public ResponseEntity<ResponseDto> handleNoUserResultsFound(NoUserResultsFoundException ex) {
         return ExceptionResponseUtils.buildResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
