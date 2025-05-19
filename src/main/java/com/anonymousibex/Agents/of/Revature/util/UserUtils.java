@@ -1,7 +1,6 @@
 package com.anonymousibex.Agents.of.Revature.util;
 
 import com.anonymousibex.Agents.of.Revature.dto.UserDto;
-import com.anonymousibex.Agents.of.Revature.model.Role;
 import com.anonymousibex.Agents.of.Revature.model.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,9 +23,8 @@ public class UserUtils {
     public static UserDto toUserDto(User user){
         Long id = user.getId();
         String username = user.getUsername();
-        Role role = user.getRole();
 
-        return new UserDto(id, username, role);
+        return new UserDto(id, username);
     }
 
     public static void clearSessionCookie(HttpServletResponse response){

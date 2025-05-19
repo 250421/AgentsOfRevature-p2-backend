@@ -1,21 +1,21 @@
 -- Ensure table exists (JPA usually handles this if ddl-auto is set)
 -- Insert test users (with BCrypt-hashed passwords)
 
-INSERT INTO users (id, password, role, username) VALUES
-  (1,   '$2a$10$Q9eV2kh5Dlttc2V4kI9LRe4Ev.5jXRphI6FE/ODG0Z.JPV1eHmt5W', 'USER',  'agent007'),
-  (2,   '$2a$10$ml03ENvpKYJ6AxyqZzlePuxAV6us3MC/mvZ3zSGZcK9Z6gAYU5Dsy', 'ADMIN', 'admin'),
-  (3,   '$2a$10$yT1FC4DRYZDkhw2SPRx5ROyt5BoRwh7PbCS6GzSGKQfppFErln28K', 'USER',  'testuser'),
-  (4,   '$2a$10$7W3PHwSOSE63456NZGq.AeuCH8r6gz49dDepMe8UJwAbDYwUXYrdi', 'USER',  'testuser2'), -- all passwords are Testtest1@
-  (197, '$2a$10$NQ8VjKtY/J507WzIhhFfqeJyJsUxVDzqwSvo3FAMwMvZb2eec3krO', 'USER',  'larry'),
-  (198, '$2a$10$/v8fF6qMFGE5jQaBVeZN6.zqR7dPiEmVkEzA5g0ml.mIzDryi/h9K', 'USER',  'gerald'),
-  (199, '$2a$10$3Td2/siw566ZxPB5dDzrNu7ixM5gyyjoRuxCIAcYFru9oBtRuxmzu', 'USER',  'filmore'),
-  (200, '$2a$10$aTWbwO.84Nk4XSB4JHVr1O7e4O2uMHS6UQGwVlW22lcI3Ll1vrqw2', 'USER',  'superman'),
-  (201, '$2a$10$z3whWUOA4B.Uqu2zwf2oi.5PzUQkpAfydtoKIR2qFYQs6nahNnaNO', 'USER',  'theb@ddest'),
-  (202, '$2a$10$A4/kfzh0MqM/Y5r38s8i3.SqXxPOgTwhfMnL5Nrx61R2Q7Pr6pnrW', 'USER',  'daniel'),
-  (203, '$2a$10$krCRwcxt6a/uzvjcbuae1OyulMh5dYrUfLFPE3SOn2yu7KfsLSSia', 'USER',  'carlos'),
-  (204, '$2a$10$JsL4WH.cUFTF4Yhwx8ONQeW0mD32xXZT4TlOaAWoCbnKe/xmV9vcu', 'USER',  'luis1'),
-  (205, '$2a$10$Bdpng4F7gQ3hi9K/Zax2Z.MH6ZA/anN6YS55tQdKv.ykWCt6eWLQy', 'USER',  'rose1'),
-  (206, '$2a$10$slJT6QliTTTbthIk9TMjuu8NmJdSEEPo40rDrq/PgbjU5GyPtZxVO', 'USER',  'josh1')
+INSERT INTO users (id, password, username) VALUES
+  (1,   '$2a$10$Q9eV2kh5Dlttc2V4kI9LRe4Ev.5jXRphI6FE/ODG0Z.JPV1eHmt5W',   'agent007'),
+  (2,   '$2a$10$ml03ENvpKYJ6AxyqZzlePuxAV6us3MC/mvZ3zSGZcK9Z6gAYU5Dsy',  'admin'),
+  (3,   '$2a$10$yT1FC4DRYZDkhw2SPRx5ROyt5BoRwh7PbCS6GzSGKQfppFErln28K',   'testuser'),
+  (4,   '$2a$10$7W3PHwSOSE63456NZGq.AeuCH8r6gz49dDepMe8UJwAbDYwUXYrdi',   'testuser2'), -- all passwords are Testtest1@
+  (197, '$2a$10$NQ8VjKtY/J507WzIhhFfqeJyJsUxVDzqwSvo3FAMwMvZb2eec3krO',   'larry'),
+  (198, '$2a$10$/v8fF6qMFGE5jQaBVeZN6.zqR7dPiEmVkEzA5g0ml.mIzDryi/h9K',   'gerald'),
+  (199, '$2a$10$3Td2/siw566ZxPB5dDzrNu7ixM5gyyjoRuxCIAcYFru9oBtRuxmzu',   'filmore'),
+  (200, '$2a$10$aTWbwO.84Nk4XSB4JHVr1O7e4O2uMHS6UQGwVlW22lcI3Ll1vrqw2',   'superman'),
+  (201, '$2a$10$z3whWUOA4B.Uqu2zwf2oi.5PzUQkpAfydtoKIR2qFYQs6nahNnaNO',   'theb@ddest'),
+  (202, '$2a$10$A4/kfzh0MqM/Y5r38s8i3.SqXxPOgTwhfMnL5Nrx61R2Q7Pr6pnrW',   'daniel'),
+  (203, '$2a$10$krCRwcxt6a/uzvjcbuae1OyulMh5dYrUfLFPE3SOn2yu7KfsLSSia',   'carlos'),
+  (204, '$2a$10$JsL4WH.cUFTF4Yhwx8ONQeW0mD32xXZT4TlOaAWoCbnKe/xmV9vcu',   'luis1'),
+  (205, '$2a$10$Bdpng4F7gQ3hi9K/Zax2Z.MH6ZA/anN6YS55tQdKv.ykWCt6eWLQy',   'rose1'),
+  (206, '$2a$10$slJT6QliTTTbthIk9TMjuu8NmJdSEEPo40rDrq/PgbjU5GyPtZxVO',   'josh1')
 ON CONFLICT (username) DO NOTHING;
 
 

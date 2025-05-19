@@ -2,7 +2,6 @@ package com.anonymousibex.Agents.of.Revature.service;
 
 import com.anonymousibex.Agents.of.Revature.dto.UserDto;
 import com.anonymousibex.Agents.of.Revature.exception.*;
-import com.anonymousibex.Agents.of.Revature.model.Role;
 import com.anonymousibex.Agents.of.Revature.model.User;
 import com.anonymousibex.Agents.of.Revature.repository.UserRepository;
 import com.anonymousibex.Agents.of.Revature.util.UserUtils;
@@ -39,7 +38,6 @@ public class UserService {
         }
 
         user.setPassword(encoder.encode(password));
-        user.setRole(Role.USER);
         user.setUsername(username);
         return UserUtils.toUserDto(userRepository.save(user));
     }
