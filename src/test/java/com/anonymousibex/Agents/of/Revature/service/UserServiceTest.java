@@ -2,10 +2,8 @@ package com.anonymousibex.Agents.of.Revature.service;
 
 import com.anonymousibex.Agents.of.Revature.dto.UserDto;
 import com.anonymousibex.Agents.of.Revature.exception.*;
-import com.anonymousibex.Agents.of.Revature.model.Role;
 import com.anonymousibex.Agents.of.Revature.model.User;
 import com.anonymousibex.Agents.of.Revature.repository.UserRepository;
-import com.anonymousibex.Agents.of.Revature.util.UserUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;

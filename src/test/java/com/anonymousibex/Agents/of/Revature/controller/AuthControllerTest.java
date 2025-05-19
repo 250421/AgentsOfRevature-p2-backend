@@ -2,10 +2,8 @@ package com.anonymousibex.Agents.of.Revature.controller;
 
 import com.anonymousibex.Agents.of.Revature.dto.ResponseDto;
 import com.anonymousibex.Agents.of.Revature.dto.UserDto;
-import com.anonymousibex.Agents.of.Revature.model.Role;
 import com.anonymousibex.Agents.of.Revature.model.User;
 import com.anonymousibex.Agents.of.Revature.service.UserService;
-import com.anonymousibex.Agents.of.Revature.util.UserUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -37,7 +35,7 @@ public class AuthControllerTest {
     @Test
     void testSignup() {
         User user = new User();
-        UserDto userDto = new UserDto(1L,"agent007", Role.USER);
+        UserDto userDto = new UserDto(1L,"agent007");
         when(userService.createUser(user)).thenReturn(userDto);
 
         ResponseEntity<UserDto> result = authController.signup(user);
@@ -82,7 +80,7 @@ public class AuthControllerTest {
         user.setId(42L);
         user.setUsername("agent007");
 
-        UserDto dto = new UserDto(42L, "agent007", Role.USER);
+        UserDto dto = new UserDto(42L, "agent007");
 
         when(userService.getCurrentUserBySession(request)).thenReturn(user);
 
